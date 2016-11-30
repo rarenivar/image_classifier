@@ -69,7 +69,7 @@ public class AnimalsClassification {
     protected static Random rng = new Random(seed);
     protected static int listenerFreq = 1;
     protected static int iterations = 1;
-    protected static int epochs = 50;//100; //50;
+    protected static int epochs = 20;//100; //50;
     protected static double splitTrainTest = 0.8;
     protected static int nCores = 2;
     protected static boolean save = false;
@@ -85,6 +85,7 @@ public class AnimalsClassification {
          *  - fileSplit = define basic dataset split with limits on format
          *  - pathFilter = define additional file load filter to limit size and balance batch content
          **/
+        System.out.print("this is a test");
         ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
         File mainPath = new File(System.getProperty("user.dir"), "dl4j-examples/src/main/resources/animals");
         FileSplit fileSplit = new FileSplit(mainPath, NativeImageLoader.ALLOWED_FORMATS, rng);
