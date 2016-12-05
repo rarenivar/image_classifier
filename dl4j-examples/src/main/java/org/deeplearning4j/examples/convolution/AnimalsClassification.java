@@ -32,6 +32,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -61,15 +62,15 @@ public class AnimalsClassification {
     protected static int height = 100;
     protected static int width = 100;
     protected static int channels = 3;
-    protected static int numExamples = 400; //80;
+    protected static int numExamples = 268;//80;
     protected static int numLabels = 4;
-    protected static int batchSize = 20;
+    protected static int batchSize = 100;//200;//20;
 
-    protected static long seed = 42;
+    protected static long seed = 100;//42;
     protected static Random rng = new Random(seed);
     protected static int listenerFreq = 1;
     protected static int iterations = 1;
-    protected static int epochs = 20;//100; //50;
+    protected static int epochs = 50;//100; //50;
     protected static double splitTrainTest = 0.8;
     protected static int nCores = 2;
     protected static boolean save = false;
@@ -95,7 +96,8 @@ public class AnimalsClassification {
          * Data Setup -> train test split
          *  - inputSplit = define train and test split
          **/
-        InputSplit[] inputSplit = fileSplit.sample(pathFilter, numExamples * (1 + splitTrainTest), numExamples * (1 - splitTrainTest));
+        //InputSplit[] inputSplit = fileSplit.sample(pathFilter, numExamples * (1 + splitTrainTest), numExamples * (1 - splitTrainTest));
+        InputSplit[] inputSplit = fileSplit.sample(pathFilter, 80, 20);
         InputSplit trainData = inputSplit[0];
         InputSplit testData = inputSplit[1];
 
@@ -105,9 +107,10 @@ public class AnimalsClassification {
          **/
         ImageTransform flipTransform1 = new FlipImageTransform(rng);
         ImageTransform flipTransform2 = new FlipImageTransform(new Random(123));
-        ImageTransform warpTransform = new WarpImageTransform(rng, 42);
+        ImageTransform warpTransform = new WarpImageTransform(rng, 50);
+        ImageTransform warpTransform2 = new WarpImageTransform(rng, 25);
 //        ImageTransform colorTransform = new ColorConversionTransform(new Random(seed), COLOR_BGR2YCrCb);
-        List<ImageTransform> transforms = Arrays.asList(new ImageTransform[]{flipTransform1, warpTransform, flipTransform2});
+        List<ImageTransform> transforms = Arrays.asList(new ImageTransform[]{flipTransform1, warpTransform, flipTransform2, warpTransform2});
 
         /**
          * Data Setup -> normalization
