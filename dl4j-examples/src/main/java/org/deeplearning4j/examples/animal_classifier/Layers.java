@@ -7,8 +7,9 @@ import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
 
 public class Layers {
 
-    public static ConvolutionLayer convInit(String name, int in, int out, int[] kernel, int[] stride, int[] pad, double bias) {
-        return new ConvolutionLayer.Builder(kernel, stride, pad)
+    public static ConvolutionLayer convolutionLayer(String name, int in, int out, int[] kernel, int[] stride, int[] pad, double bias) {
+
+        ConvolutionLayer builder = new ConvolutionLayer.Builder(kernel, stride, pad)
             // convolution layer name
             .name(name)
             // number of channels
@@ -19,6 +20,8 @@ public class Layers {
             .biasInit(bias)
             // returns the convolution layer object
             .build();
+        return builder;
+
     }
 
     public static ConvolutionLayer conv3x3(String name, int out, double bias) {

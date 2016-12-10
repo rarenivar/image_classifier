@@ -15,6 +15,7 @@ import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.datasets.iterator.MultipleEpochsIterator;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.examples.convolution.AnimalsClassification;
+import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.inputs.InvalidInputTypeException;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
@@ -65,8 +66,9 @@ public class AnimalClassifier {
         ImageTransform flipTransform1 = new FlipImageTransform(Configuration.rng);
         ImageTransform flipTransform2 = new FlipImageTransform(new Random(123));
         ImageTransform warpTransform = new WarpImageTransform(Configuration.rng, 42);
+        ImageTransform warpTransform2 = new WarpImageTransform(Configuration.rng, 25);
 //        ImageTransform colorTransform = new ColorConversionTransform(new Random(seed), COLOR_BGR2YCrCb);
-        List<ImageTransform> transforms = Arrays.asList(new ImageTransform[]{flipTransform1, warpTransform, flipTransform2});
+        List<ImageTransform> transforms = Arrays.asList(new ImageTransform[]{flipTransform1, warpTransform, flipTransform2, warpTransform2});
 
         /**
          * Data Setup -> normalization
@@ -79,13 +81,14 @@ public class AnimalClassifier {
         // Uncomment below to try AlexNet. Note change height and width to at least 100
 //        MultiLayerNetwork network = new AlexNet(height, width, channels, numLabels, seed, iterations).init();
 
+
         MultiLayerNetwork network;
 //        switch (modelType) {
 //            case "LeNet":
 //                network = lenetModel();
 //                break;
 //            case "AlexNet":
-                network = MultiLayerNetworks.alexnetModel();
+                network = MultiLayerNetworks.ImageNeuralNetwork(0.01, OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT, Configuration.iterations);
 //                break;
 //            case "custom":
 //                network = customModel();
@@ -107,14 +110,14 @@ public class AnimalClassifier {
         MultipleEpochsIterator trainIter;
 
 
-        log.info("Train model....");
-        // Train without transformations
-        recordReader.initialize(trainData, null);
-        dataIter = new RecordReaderDataSetIterator(recordReader, Configuration.batchSize, 1, Configuration.numLabels);
-        scaler.fit(dataIter);
-        dataIter.setPreProcessor(scaler);
-        trainIter = new MultipleEpochsIterator(Configuration.epochNum, dataIter, Configuration.nCores);
-        network.fit(trainIter);
+//        log.info("Train model....");
+//        // Train without transformations
+//        recordReader.initialize(trainData, null);
+//        dataIter = new RecordReaderDataSetIterator(recordReader, Configuration.batchSize, 1, Configuration.numLabels);
+//        scaler.fit(dataIter);
+//        dataIter.setPreProcessor(scaler);
+//        trainIter = new MultipleEpochsIterator(Configuration.epochNum, dataIter, Configuration.nCores);
+//        network.fit(trainIter);
 
         // Train with transformations
         for (ImageTransform transform : transforms) {
@@ -152,5 +155,9 @@ public class AnimalClassifier {
 //        }
         log.info("****************Example finished********************");
 
+    }
+
+    public static void main(String[] args) throws Exception {
+        new AnimalClassifier().Execute();
     }
 }

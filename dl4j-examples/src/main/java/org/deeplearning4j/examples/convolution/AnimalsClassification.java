@@ -75,7 +75,7 @@ public class AnimalsClassification {
     protected static int nCores = 2;
     protected static boolean save = false;
 
-    protected static String modelType = "AlexNet"; // LeNet, AlexNet or Custom but you need to fill it out
+    protected static String modelType = "custom"; //"AlexNet"; // LeNet, AlexNet or Custom but you need to fill it out
 
     public void run(String[] args) throws Exception {
 
@@ -132,6 +132,7 @@ public class AnimalsClassification {
                 network = alexnetModel();
                 break;
             case "custom":
+                log.info("**** custom model *****");
                 network = customModel();
                 break;
             default:
@@ -151,14 +152,14 @@ public class AnimalsClassification {
         MultipleEpochsIterator trainIter;
 
 
-        log.info("Train model....");
-        // Train without transformations
-        recordReader.initialize(trainData, null);
-        dataIter = new RecordReaderDataSetIterator(recordReader, batchSize, 1, numLabels);
-        scaler.fit(dataIter);
-        dataIter.setPreProcessor(scaler);
-        trainIter = new MultipleEpochsIterator(epochs, dataIter, nCores);
-        network.fit(trainIter);
+//        log.info("Train model....");
+//        // Train without transformations
+//        recordReader.initialize(trainData, null);
+//        dataIter = new RecordReaderDataSetIterator(recordReader, batchSize, 1, numLabels);
+//        scaler.fit(dataIter);
+//        dataIter.setPreProcessor(scaler);
+//        trainIter = new MultipleEpochsIterator(epochs, dataIter, nCores);
+//        network.fit(trainIter);
 
         // Train with transformations
         for (ImageTransform transform : transforms) {
@@ -301,11 +302,53 @@ public class AnimalsClassification {
 
     }
 
-    public static MultiLayerNetwork customModel() {
-        /**
-         * Use this method to build your own custom model.
-         **/
-        return null;
+    public MultiLayerNetwork customModel() {
+
+        double nonZeroBias = 1;
+        double dropOut = 0.5;
+
+        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
+            .seed(seed)
+            .weightInit(WeightInit.DISTRIBUTION)
+            .dist(new NormalDistribution(0.0, 0.01))
+            .activation("relu")
+            .updater(Updater.NESTEROVS)
+            .iterations(iterations)
+            .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) // normalize to prevent vanishing or exploding gradients
+            .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+            .learningRate(1e-2)
+            .biasLearningRate(1e-2*2)
+            .learningRateDecayPolicy(LearningRatePolicy.Step)
+            .lrPolicyDecayRate(0.1)
+            .lrPolicySteps(100000)
+            .regularization(true)
+            .l2(5 * 1e-4)
+            .momentum(0.9)
+            .miniBatch(false)
+            .list()
+            .layer(0, convInit("cnn1", channels, 96, new int[]{11, 11}, new int[]{4, 4}, new int[]{3, 3}, 0))
+            .layer(1, new LocalResponseNormalization.Builder().name("lrn1").build())
+            //.layer(2, maxPool("maxpool1", new int[]{3,3}))
+            .layer(2, conv5x5("cnn2", 256, new int[] {1,1}, new int[] {2,2}, nonZeroBias))
+            //.layer(4, new LocalResponseNormalization.Builder().name("lrn2").build())
+            //.layer(5, maxPool("maxpool2", new int[]{3,3}))
+            .layer(3,conv3x3("cnn3", 384, 0))
+            .layer(4,conv3x3("cnn4", 384, nonZeroBias))
+            .layer(5,conv3x3("cnn5", 256, nonZeroBias))
+            //.layer(9, maxPool("maxpool3", new int[]{3,3}))
+            .layer(6, fullyConnected("ffn1", 4096, nonZeroBias, dropOut, new GaussianDistribution(0, 0.005)))
+            .layer(7, fullyConnected("ffn2", 4096, nonZeroBias, dropOut, new GaussianDistribution(0, 0.005)))
+            .layer(8, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                .name("output")
+                .nOut(numLabels)
+                .activation("softmax")
+                .build())
+            .backprop(true)
+            .pretrain(false)
+            .cnnInputSize(height,width,channels).build();
+
+        return new MultiLayerNetwork(conf);
+
     }
 
     public static void main(String[] args) throws Exception {

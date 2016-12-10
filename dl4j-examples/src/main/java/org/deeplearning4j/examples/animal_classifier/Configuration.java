@@ -8,14 +8,19 @@ import java.util.Random;
 
 public class Configuration {
 
+    /**
+     * 1. Number of epochs
+     * 2. Number of iterations
+     */
+
     public static int iterations = 1;
     public static int epochNum = 50;//100; //50;
-    public static int numImages = 400; //80;
+    public static int numImages = 268; //80;
     public static int numChannels = 3;
-    public static long seedNumber= 42;
+    public static long seedNumber= 100;
     public static Random rng = new Random(seedNumber);
 
-    public static int batchSize = 20;
+    public static int batchSize = 100;
     public static int numLabels = 4;
 
     public static int listenerFreq = 1;
