@@ -84,5 +84,4 @@ public class Layers {
             .nOut(numberFilters)
             .build();
     }
-
 }

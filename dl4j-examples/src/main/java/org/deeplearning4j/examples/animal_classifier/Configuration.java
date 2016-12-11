@@ -7,10 +7,8 @@ import java.util.Random;
  */
 public class Configuration {
 
-    // Number of Epochs to perform. An Epoch is a single pass though the training data set
-    public static int epochNum = 50; //100; //50;
     // Number of images contained in the training data set
-    public static int numImages = 268; //80;
+    public static int numImages = 268;
     // Number of channels for the convolution layer
     public static int numChannels = 3;
     public static Random rng = new Random(100);
@@ -20,8 +18,6 @@ public class Configuration {
     public static int numLabels = 4;
     // Queue size of the EpochsIterator object, which will be used when training our neural network
     public static int EpochsIteratorQueueSize = 2;
-    // Percentage of split between our train and testing data set
-    public static double splitTrainTest = 0.8;
     // Dimension of the images when the neural network during the training process
     public static int imageHeight = 100;
     public static int imageWidth = 100;

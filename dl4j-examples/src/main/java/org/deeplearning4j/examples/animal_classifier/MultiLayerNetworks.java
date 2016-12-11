@@ -1,6 +1,5 @@
 package org.deeplearning4j.examples.animal_classifier;
 
-
 import org.deeplearning4j.nn.conf.*;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
@@ -9,7 +8,6 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.nn.conf.layers.LocalResponseNormalization;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.conf.distribution.GaussianDistribution;
-
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 /**
