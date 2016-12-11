@@ -1,7 +1,17 @@
 package org.deeplearning4j.examples.animal_classifier;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.ConditionalFileFilter;
+import java.io.File;
+import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
+
+import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.datasets.iterator.MultipleEpochsIterator;
+import org.deeplearning4j.eval.Evaluation;
+import org.deeplearning4j.nn.api.OptimizationAlgorithm;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+
 import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.split.FileSplit;
@@ -11,26 +21,15 @@ import org.datavec.image.recordreader.ImageRecordReader;
 import org.datavec.image.transform.FlipImageTransform;
 import org.datavec.image.transform.ImageTransform;
 import org.datavec.image.transform.WarpImageTransform;
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.datasets.iterator.MultipleEpochsIterator;
-import org.deeplearning4j.eval.Evaluation;
-import org.deeplearning4j.examples.convolution.AnimalsClassification;
-import org.deeplearning4j.nn.api.OptimizationAlgorithm;
-import org.deeplearning4j.nn.conf.inputs.InvalidInputTypeException;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
-import org.deeplearning4j.util.NetSaverLoaderUtils;
+
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 public class AnimalClassifier {
 
@@ -157,6 +156,11 @@ public class AnimalClassifier {
 
     }
 
+    /**
+     * point of execution
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         new AnimalClassifier().Execute();
     }

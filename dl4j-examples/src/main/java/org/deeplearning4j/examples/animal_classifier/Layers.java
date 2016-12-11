@@ -1,58 +1,54 @@
 package org.deeplearning4j.examples.animal_classifier;
 
-import org.deeplearning4j.nn.conf.distribution.Distribution;
 import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
+import org.deeplearning4j.nn.conf.distribution.Distribution;
+
 
 public class Layers {
 
-    public static ConvolutionLayer convolutionLayer(String name, int in, int out, int[] kernel, int[] stride, int[] pad, double bias) {
-
-        ConvolutionLayer builder = new ConvolutionLayer.Builder(kernel, stride, pad)
+    public static ConvolutionLayer initialConvolutionLayer(String layerName, int numberChannels,
+                                                           int numberFilters, int[] kernelSize, int[] stride, int[] pad,
+                                                           double biasValue) {
+        ConvolutionLayer builder = new ConvolutionLayer.Builder(kernelSize, stride, pad)
             // convolution layer name
-            .name(name)
-            // number of channels
-            .nIn(in)
-            // number of filters (depth)
-            .nOut(out)
+            .name(layerName)
             // bias initial value
-            .biasInit(bias)
+            .biasInit(biasValue)
+            // number of channels
+            .nIn(numberChannels)
+            // number of filters (depth)
+            .nOut(numberFilters)
             // returns the convolution layer object
             .build();
         return builder;
-
     }
 
-    public static ConvolutionLayer conv3x3(String name, int out, double bias) {
-        return new ConvolutionLayer.Builder(new int[]{3,3}, new int[] {1,1}, new int[] {1,1})
-            .name(name)
-            .nOut(out)
-            .biasInit(bias)
+
+    public static ConvolutionLayer convolutionLayer(String layerName, int numberFilters, int[] stride, int[] pad,
+                                                    int[] kernelSize, double biasValue) {
+        return new ConvolutionLayer.Builder(kernelSize, stride, pad)
+            .name(layerName)
+            .biasInit(biasValue)
+            .nOut(numberFilters)
             .build();
     }
 
-    public static ConvolutionLayer conv5x5(String name, int out, int[] stride, int[] pad, double bias) {
-        return new ConvolutionLayer.Builder(new int[]{5,5}, stride, pad)
-            .name(name)
-            .nOut(out)
-            .biasInit(bias)
+    public static SubsamplingLayer subsamplingLayer(String layerName, int[] stride, int[] kernel) {
+        return new SubsamplingLayer.Builder(kernel, stride)
+            .name(layerName)
             .build();
     }
 
-    public static SubsamplingLayer maxPool(String name, int[] kernel) {
-        return new SubsamplingLayer.Builder(kernel, new int[]{2,2})
-            .name(name)
-            .build();
-    }
-
-    public static DenseLayer fullyConnected(String name, int out, double bias, double dropOut, Distribution dist) {
+    public static DenseLayer denseLayer(String layerName, int numberFilters, double bias, double dropOut,
+                                            Distribution dist) {
         return new DenseLayer.Builder()
-            .name(name)
-            .nOut(out)
-            .biasInit(bias)
-            .dropOut(dropOut)
+            .name(layerName)
             .dist(dist)
+            .dropOut(dropOut)
+            .biasInit(bias)
+            .nOut(numberFilters)
             .build();
     }
 

@@ -41,20 +41,25 @@ public class MultiLayerNetworks {
             .momentum(0.9)
             .miniBatch(false)
             .list()
-            .layer(0, Layers.convolutionLayer("cnn1", Configuration.numChannels, 96, new int[]{11, 11}, new int[]{4, 4}, new int[]{3, 3}, 0))
-            .layer(1, new LocalResponseNormalization.Builder().name("lrn1").build())
-            .layer(2, Layers.maxPool("maxpool1", new int[]{3,3}))
-            .layer(3, Layers.conv5x5("cnn2", 256, new int[] {1,1}, new int[] {2,2}, 1))
-            .layer(4, new LocalResponseNormalization.Builder().name("lrn2").build())
-            .layer(5, Layers.maxPool("maxpool2", new int[]{3,3}))
-            .layer(6, Layers.conv3x3("cnn3", 384, 0))
-            .layer(7, Layers.conv3x3("cnn4", 384, 1))
-            .layer(8, Layers.conv3x3("cnn5", 256, 1))
-            .layer(9, Layers.maxPool("maxpool3", new int[]{3,3}))
-            .layer(10, Layers.fullyConnected("ffn1", 4096, 1, 0.5, new GaussianDistribution(0, 0.005)))
-            .layer(11, Layers.fullyConnected("ffn2", 4096, 1, 0.5, new GaussianDistribution(0, 0.005)))
+            .layer(0, Layers.initialConvolutionLayer("initialConvolutionLayer", Configuration.numChannels, 96,
+                new int[]{11, 11}, new int[]{4, 4}, new int[]{3, 3}, 0))
+            .layer(1, new LocalResponseNormalization.Builder().name("firstResponseNormalization").build())
+            .layer(2, Layers.subsamplingLayer("firstMaxpoolLayer", new int[]{2,2}, new int[]{3,3}))
+            .layer(3, Layers.convolutionLayer("secondConvolutionLayer", 256, new int[] {1,1}, new int[] {2,2},
+                new int[] {5,5}, 1))
+            .layer(4, new LocalResponseNormalization.Builder().name("secondResponseNormalization").build())
+            .layer(5, Layers.subsamplingLayer("thirdMaxpoolLayer", new int[]{2,2}, new int[]{3,3}))
+            .layer(6, Layers.convolutionLayer("fourthConvolutionLayer", 384, new int[] {1,1},
+                new int[] {2,2}, new int[] {3,3}, 0))
+            .layer(7, Layers.convolutionLayer("fifthConvolutionLayer", 384, new int[] {1,1},
+                new int[] {2,2}, new int[] {3,3}, 1))
+            .layer(8, Layers.convolutionLayer("sixthConvolutionLayer", 256, new int[] {1,1},
+                new int[] {2,2}, new int[] {3,3}, 1))
+            .layer(9, Layers.subsamplingLayer("secondMaxpoolLayer", new int[]{2,2}, new int[]{3,3}))
+            .layer(10, Layers.denseLayer("firstFullyConnectedLayer", 4096, 1, 0.5, new GaussianDistribution(0, 0.005)))
+            .layer(11, Layers.denseLayer("secondFullyConnectedLayer", 4096, 1, 0.5, new GaussianDistribution(0, 0.005)))
             .layer(12, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-                .name("output")
+                .name("outpuLayer")
                 .nOut(Configuration.numLabels)
                 .activation("softmax")
                 .build())
@@ -62,8 +67,6 @@ public class MultiLayerNetworks {
             .pretrain(false)
             .cnnInputSize(Configuration.imageHeight, Configuration.imageWidth, Configuration.numChannels)
             .build();
-
-
 //        MultiLayerConfiguration multiLayerConfiguration = new NeuralNetConfiguration.Builder()
 //            .seed(Configuration.seedNumber)
 //            .weightInit(WeightInit.DISTRIBUTION)
@@ -104,11 +107,6 @@ public class MultiLayerNetworks {
 //            .pretrain(false)
 //            .cnnInputSize(Configuration.imageHeight, Configuration.imageWidth, Configuration.numChannels)
 //            .build();
-
-
-
         return new MultiLayerNetwork(multiLayerConfiguration);
-
     }
-
 }
