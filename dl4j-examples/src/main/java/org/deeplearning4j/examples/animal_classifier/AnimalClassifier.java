@@ -25,18 +25,23 @@ import org.datavec.image.transform.FlipImageTransform;
 import org.datavec.image.transform.ImageTransform;
 
 /**
- * TODO: add description
+ * An AnimalClassifier object’s responsibility is to scan, manage and process the training and test data before a deep
+ * neural network can use it. In this particular case, the data will consist of a number of animal images. After this,
+ * the AnimalClassifier initializes a MultiLayerNetwork object, which is an implementation of a deep neural network.
+ * Additionally, this object creates the different image transforms that will be when the deep neural network starts
+ * learning with the training data. Finally, once the deep neural network is done learning, this object will also test
+ * the learning model with the previously defined testing data.
  */
 public class AnimalClassifier {
 
     /**
-     * TODO: add description
+     * Start executing the Classifier
      * @throws Exception
      */
     public void Execute() throws Exception {
 
-        // Number of Epochs to perform. An Epoch is a single pass though the training data set
-        int[] epochValues = new int[] {25, 50, 100};
+        // Number of Epochs and Iterations, Learning Rates
+        int[] epochValues = new int[] {5, 15, 25};
         double[] learningRateValues = new double[] {0.1, 0.01, 0.001};
         int[] iterationValues = new int[] {1, 2, 4};
 
@@ -95,6 +100,8 @@ public class AnimalClassifier {
                     System.out.println("End time: " + endDate.toString());
                     // Calculating total times in seconds
                     long totalTime = (endDate.getTime() - startDate.getTime()) / 1000;
+                    System.out.println("Configuration ... Epochs: " + epochValues[i] + " Iterations: " +
+                        iterationValues[j] + " Learning Rate: " + learningRateValues[k]);
                     System.out.println("Neural Network training total times in seconds: " + totalTime);
                     // Testing the performance of the neural network - deepNeuralNetwork
                     AnalyzingDeepNeuralNetwork(imageRecordReader, testInputSplit, dataNormalization, deepNeuralNetwork);
